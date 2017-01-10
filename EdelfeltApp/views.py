@@ -181,7 +181,7 @@ def artwork_fm_id(request, fm_id, slug):
 
 
 def artwork_image(request, id):
-    base_path = '//adilla/data/edelfelt/thumbnails/'
+    base_path = '//thumbnails/'
     path = random.choice(os.listdir(base_path)) #random for now...
     path = base_path + path #artwork.path
     image_data = open(path, "rb").read()
