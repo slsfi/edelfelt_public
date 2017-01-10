@@ -1,0 +1,32 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}Platser{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Platser som nämns i breven</h3>
+        </div>
+        <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-2 tight"></div>
+                    <div class="col-md-2 tight">Nämns i brev</div>
+                    <div class="col-md-2 tight">Brev skrivna</div>
+                </div>
+            {% for location in locations %}
+                <div class="row">
+                    <div class="col-md-2 tight">
+                        <a href="{{ location.get_absolute_url }}">{{ location }}</a>
+                    </div>
+                    <div class="col-md-2 tight">
+                        <span class="badge">{{ location.events.count }}</span>
+                    </div>
+                    <div class="col-md-2 tight">
+                        {% if location.letters.count > 0 %}
+                            <span class="badge">{{ location.letters.count }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

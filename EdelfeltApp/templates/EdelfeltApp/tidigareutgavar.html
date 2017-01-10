@@ -1,0 +1,47 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}Tidigare utgåvor{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Tidigare brevutgåvor</h3>
+        </div>
+        <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8">
+                <h4>Berta Edelfelts brevutgåvor 1917−1930</h4>
+                <p>
+                    Berta Edelfelt publicerade broderns brev i urval i fem delar. Holger Schildts förlag i Helsingfors gav ut brevutgåvorna mellan åren 1917 och 1930. Breven är inte återgivna i sin helhet, utan underställdes en hel del redigering och censur. Albert Edelfelt själv hade avlidit 1905 och många av de personer som han hade skrivit om i breven till modern och systrarna levde fortfarande eller hade ättlingar och familjemedlemmar i livet. Berta Edelfelt ville inte stöta sig med omgivningen, och hon ville inte heller inbjuda omvärlden att blicka in på broderns mest privata och intima sidor. Sådant som kunde uppfattas som stötande, omoraliskt och olämpligt lämnade hon utanför brevutgåvorna. Systern ville bevara minnet av brodern som nationalkonstnär.
+                </p>
+
+                <p>
+                    <i>Ur Albert Edelfelts brev. Drottning Blanca och Hertig Carl samt några andra tavlor</i>, utg. Berta Edelfelt, Helsingfors: Schildts 1917
+                </p>
+                <p>
+                    <i>Ur Albert Edelfelts brev. Resor och intryck</i>, utg. Berta Edelfelt, Helsingfors: Schildts 1921
+                </p>
+
+                <p>
+                    <i>Ur Albert Edelfelts brev. Liv och arbete</i>, utg. Berta Edelfelt, Helsingfors: Schildts 1926
+                </p>
+
+                <p>
+                    <i>Ur Albert Edelfelts brev. Middagshöjd</i>, utg. Berta Edelfelt, Helsingfors: Schildts 1928
+                </p>
+
+                <p>
+                    <i>Ur Albert Edelfelts brev. Resor och intryck</i>, utg. Berta Edelfelt, Helsingfors: Schildts 1930
+                </p>
+
+                 <h4>Andra brevutgåvor</h4>
+                <p>
+                    <i>Niin kutsuttu sydämeni. Albert Edelfeltin kirjeet äidilleen 1873−1901</i>, utg. Anna Kortelainen, övers. Sirpa Kähkönen, Helsingfors: Otava 2001                </p>
+
+                <p>
+                    <i>Albert Edelfelt och Ryssland. Brev från åren 1875−1905</i>, utg. Rainer Knapas & Maria Vainio[-Kurtakko], Skrifter utgivna av Svenska litteratursällskapet i Finland 668, Helsingfors: SLS 2004. Texterna finns att <a href="{% static 'EdelfeltApp/Edelfelt_och_Ryssland.pdf' %}">ladda ner som pdf här.</a>
+                </p>
+            </div>
+        </div>
+        </div>
+        </div>
+{% endblock %}

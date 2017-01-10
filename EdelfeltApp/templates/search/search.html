@@ -1,0 +1,81 @@
+{% extends 'EdelfeltApp/base.html' %}
+{% load bootstrap %}
+{% load highlight %}
+{% block pre_title %}Sökning{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Sök i materialet</h3>
+        </div>
+        <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8">
+
+
+    <form method="get" action="../search">
+        <table>
+            {{ form|bootstrap }}
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <span class="input-group-btn">
+                        <input type="submit" class="btn btn-default" value="Sök">
+                    </span>
+                </td>
+            </tr>
+        </table>
+
+        </form>
+            </div>
+            </div>
+        <div class="row">
+        <div class="col-md-12">
+        {% if query %}
+            <h3>Resultat</h3>
+
+            {% for result in page.object_list %}
+                <div class="row">
+                <div class="col-md-2">
+                <p>
+                {% if result.model_name == 'person' %}
+                    <span class="label label-info">Person</span>
+                {% elif result.model_name == 'letter' %}
+                    <span class="label label-warning">Brev</span>
+                {% elif result.model_name == 'event' %}
+                    <span class="label label-warning">Brevinnehåll</span>
+                {% elif result.model_name == 'artwork' %}
+                    <span class="label label-primary">Konstverk</span>
+                {% elif result.model_name == 'location' %}
+                    <span class="label label-primary">Plats</span>
+                {% endif %}
+                </div>
+                <div class="col-md-10">
+                    <a href="{{ result.object.get_absolute_url }}">{{ result.object }}</a>
+                </div>
+                {% comment %}    <div class="col-md-2">
+                        {{ result.score }}
+                    </div>{% endcomment %}
+                </p>
+
+                </div>
+            {% empty %}
+                <p>Inga träffar</p>
+            {% endfor %}
+
+            {% if page.has_previous or page.has_next %}
+                <div>
+                    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Föregående{% if page.has_previous %}</a>{% endif %}
+                    |
+                    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Nästa &raquo;{% if page.has_next %}</a>{% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            {# Show some example queries to run, maybe query syntax, something else? #}
+        {% endif %}
+            </div>
+        </div>
+        </div>
+        </div>
+
+
+{% endblock %}

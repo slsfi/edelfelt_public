@@ -1,0 +1,26 @@
+{{ object.full_name }}
+{{ object.first_name }}
+{{object.von_van_af }} {{ object.last_name }}
+{{ object }}
+{{ object.first_name2 }}
+{{ object.last_name2 }}
+{{ object.first_name3 }}
+{{ object.last_name3 }}
+{{ object.full_name }}
+{{ object.full_name }}
+{{ object.nickname }}
+{{ object.alternative_name }}
+{{ object.description }}
+
+{{object.name_2_display}}
+{{object.name_info2}}
+{{object.name_3_display}}
+{{object.name_info3}}
+{{object.name_4_display}}
+{{object.name_info4}}
+
+{% for event in object.events.all %}
+    {% if forloop.counter|divisibleby:3 %}
+        {{ object.full_name }}
+    {% endif %}
+{% endfor %}

@@ -1,0 +1,11 @@
+{{ object.title }}
+{{ object.title2 }}
+{{ object.title3 }}
+{{ object.title4 }}
+{{ object.description }}
+{{ object.comments }}
+{{ object.type }}
+
+{% for location in object.locations.all %}
+    {{ location.country }}
+{% endfor %}

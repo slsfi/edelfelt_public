@@ -1,0 +1,144 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="x-ua-compatible" content="IE=Edge"/>
+    <title>{% block pre_title %}{% endblock %} | Albert Edelfelts brev</title>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="google-site-verification" content="GyhNvwhG6jdYaBYIsRCv5b-vKLg4860ilqn21VR_Kos" />
+    <meta name="description" content="{% block meta_description %}Albert Edelfelt brev till sin mor, konstverk, porträtt. Letters, paintings and portraits by Albert Edelfelt.{% endblock %}">
+    {% block head %}{% endblock %}
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="{% static "EdelfeltApp/global-style.css" %}" media="all" />
+    <!-- Custom styles for this template -->
+</head>
+<body data-spy="scroll" data-target="#sidenav" class="{% block body_class %}{% endblock %}">
+{% block above_menu %}{% endblock %}
+<div class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class>Visa menyn</span>
+            </button>
+            <div class="navbar-brand logo">
+                <a href="{% url 'EdelfeltApp.views.home' %}"> <img src="{% static "EdelfeltApp/SLS_logo_krans.png" %}" height="47"></a>
+            </div>
+        </div>
+        <div class="navbar-collapse collapse">
+
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Breven<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'EdelfeltApp.views.letter_list' %}">Alla brev</a></li>
+                        <li><a href="{% url 'EdelfeltApp.views.subject_list' %}">Lista brev med hjälp av ämnesord</a></li>
+                        <li><a href="{% url 'EdelfeltApp.views.location_list' %}">Lista brev enligt plats</a></li>
+                        <li><a href="{% url 'haystack_search' %}">Sök i materialet</a></li>
+
+
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Konsten<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'EdelfeltApp.views.artwork_list' %}">Verkförteckning</a></li>
+                        <li><a href="{% url 'EdelfeltApp.views.artwork_gallery' %}">Bildgalleri</a></li>
+                        <li><a href="{% url 'hintze' %}">Bertel Hintze och hans konstverkskatalog</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Personerna<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'EdelfeltApp.views.person_list' 'samtida'%}">Edelfelts samtida</a></li>
+                        <li><a href="{% url 'EdelfeltApp.views.person_list' 'historisk'%}">Historiska personer</a></li>
+                        <li><a href="{% url 'EdelfeltApp.views.person_list' 'mytologisk'%}">Fiktiva och bibliska gestalter</a></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utgåvan<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'databasen' %}">Brevsamlingen</a></li>
+                        <li><a href="{% url 'webbutgavan' %}">Webbutgåvan</a></li>
+                        <li><a href="{% url 'tidigareutgavar' %}">Tidigare brevutgåvor</a></li>
+                        <li><a href="{% url 'redaktion' %}">Redaktion</a></li>
+                        <li><a href="{% url 'copyright' %}">Hänvisa till utgåvan och upphovsrätt</a></li>
+                        <li><a href="{% url 'api_info' %}">Öppet REST API (på engelska)</a></li>
+                    </ul>
+                </li>
+
+                <li >
+                    <a href="{% url 'albertedelfelt' %}">Albert Edelfelt</a>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-right" role="form" action="{% url 'haystack_search' %}" method="GET">
+                <div class="input-group">
+                    <input width="200" type="search" name="q" class="form-control" placeholder="Sök i materialet">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default"><i class="icon glyphicon glyphicon-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% block home_end_container %}{% endblock %}
+<div class="container main-container">
+    {% block content %}Empty page{% endblock %}
+</div>
+
+<footer>
+    <p class="text-muted">
+        Albert Edelfelts brev. Elektronisk brev- och konstutgåva, utg. Maria Vainio-Kurtakko, Henrika Tandefelt & Elisabeth Stubb, Svenska litteratursällskapet i Finland, 2014–<br>
+        <a style="color:#ffffff" href="http://www.sls.fi">Svenska litteratursällskapet i Finland r.f.</a> i samarbete med <a style="color:#ffffff" href="http://www.fng.fi">Finlands Nationalgalleri</a> och <a style="color:#ffffff"href="http://www.ateneum.fi/sv">Ateneum</a>
+    </p>
+</footer>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+<script type='text/javascript'>
+    $(function () {
+        $("[data-toggle='tooltip']").tooltip();
+    })
+
+
+</script>
+
+
+{% block scripts %}
+
+
+{% endblock %}
+
+{% comment %}Should be moved to the corresponding pages and the script block{% endcomment %}
+<script type='text/javascript'>
+    $('.carousel').carousel({
+        interval: false,
+        wrap: false
+
+    })
+</script>
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-2554642-3', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>

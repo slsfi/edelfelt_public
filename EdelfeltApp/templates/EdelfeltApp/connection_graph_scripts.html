@@ -1,0 +1,249 @@
+
+<script src="/static/EdelfeltApp/d3.v3.min.js"></script>
+
+<!--
+    This chord graph is modified from AndrewRP's chord example here: http://bl.ocks.org/AndrewRP/7468330
+    That in turn is modified from eleyine's (http://bl.ocks.org/eleyine/raw/6846156/) and
+    Mike Bostock's (http://bost.ocks.org/mike/uberdata/) examples.
+-->
+
+<script>
+
+var width = $(window).width() * 0.8, // modal dialog width
+    height =  $(window).height() - 100, // modal dialog max height
+    outerRadius = Math.min(width, height) / 2 - 75,
+    innerRadius = outerRadius - 24;
+
+var arc = d3.svg.arc()
+    .innerRadius(innerRadius)
+    .outerRadius(outerRadius);
+
+var layout = d3.layout.chord()
+    .padding(.04)
+    .sortSubgroups(d3.descending)
+    .sortChords(d3.ascending);
+
+var path = d3.svg.chord()
+    .radius(innerRadius);
+
+function drawSvg(){
+    // Remove previous svg, if it exists
+    d3.select("#connectionSvg svg").remove();
+
+    var svg = d3.select("#connectionSvg").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("id", "circle")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    svg.append("circle")
+        .attr("r", outerRadius);
+
+    return svg;
+}
+
+
+drawFirstDegreeConnections();
+
+var firstDegreeData = null;
+var secondDegreeData = null;
+
+function redrawGraph(select){
+    if(select.value=="1"){
+        drawFirstDegreeConnections();
+    } else if(select.value=="2"){
+        drawSecondDegreeConnections();
+    }
+}
+
+function drawFirstDegreeConnections(){
+    if(firstDegreeData == null){
+        d3.json("{% url 'EdelfeltApp.views.person_connections_json' person.id %}", function(error, json){
+            firstDegreeData = json;
+            drawChordGraph(firstDegreeData);
+        });
+    } else {
+        drawChordGraph(firstDegreeData)
+    }
+}
+
+function drawSecondDegreeConnections(){
+    if(secondDegreeData == null){
+        d3.json("{% url 'EdelfeltApp.views.person_connections_json' person.id %}?two_degrees=true", function(error, json){
+            secondDegreeData = json;
+            drawChordGraph(secondDegreeData);
+        });
+    } else {
+        drawChordGraph(secondDegreeData)
+    }
+}
+
+function drawChordGraph(data) {
+
+    // Compute the chord layout.
+    layout.matrix(data.matrix);
+
+    var contacts = data.contacts;
+
+    var svg = drawSvg();
+
+    // Add a group per neighborhood.
+    var group = svg.selectAll(".group")
+        .data(layout.groups)
+        .enter().append("g")
+        .attr("class", "group")
+        .on("mouseover", mouseover);
+
+    // Add the group arc.
+    var groupPath = group.append("path")
+        .attr("id", function(d, i) { return "group" + i; })
+        .attr("d", arc)
+        .style("fill", function(d, i) { return contacts[i][1]; });
+
+    // Add tooltip
+    groupPath.append("title")
+        .text(function(d, i) { return contacts[i][0] + " \n" + contacts[i][4]; });
+
+    function textPointX(path){
+        return calculateTextPoint(path)[0];
+    }
+
+    function textPointY(path){
+        return calculateTextPoint(path)[0];
+    }
+
+    // Calculate the location for the name
+    function calculateTextPoint(path){
+        var pathSegList = path.pathSegList;
+        var startPointX = pathSegList.getItem(0).x;
+
+        // Fix issue with webkit, the first name appears on wrong side otherwise.
+        if(startPointX==0){
+            startPointX = 0.000001;
+        }
+
+        var startPointY = pathSegList.getItem(0).y;
+        var endPointX = pathSegList.getItem(1).x;
+        var endPointY = pathSegList.getItem(1).y;
+
+        var startAngle = adjustAtan(startPointX, startPointY);
+        var endAngle = adjustAtan(endPointX, endPointY);
+
+        var textPointAngle = null;
+        if((startAngle - endAngle) < Math.PI){
+            textPointAngle = (startAngle + endAngle) / 2
+
+        } else {
+            // Normally, the end angle is smaller than start-angle, except
+            // when we cross the 2 PI line.
+            if(2 * Math.PI - endAngle < startAngle){
+                textPointAngle = (startAngle - (2 * Math.PI - endAngle)) / 2;
+            } else {
+                textPointAngle = (startAngle + 2 * Math.PI - endAngle) / 2;
+            }
+        }
+
+        var radius = outerRadius + 15;
+        var textPointX = radius * Math.cos(textPointAngle);
+        var textPointY = (radius * Math.sin(textPointAngle));
+
+        return [textPointX, textPointY];
+    }
+
+    function adjustAtan(x, y){
+        var atanResult = Math.atan(y / x);
+        if(x >= 0 && y >= 0){
+            return atanResult;
+        }else if(x<=0){
+            return atanResult + Math.PI;
+        }else if(y<=0 && x >=0){
+            return atanResult + 2 * Math.PI;
+        }
+    }
+
+    function textPointX(path){
+        return calculateTextPoint(path)[0];
+    }
+
+    function textPointY(path){
+        return calculateTextPoint(path)[1];
+    }
+
+    // Add the text.
+    var personLink = group.append("a")
+            .attr("xlink:href", function(d, i){
+                return "/personer/"+ contacts[i][2]+"/"+ contacts[i][3] + "/"
+            })
+            .attr("xlink:show", "new");
+
+    // Add tooltip
+    personLink.append("title")
+        .text(function(d, i) { return contacts[i][0] + " \n" + contacts[i][4]; });
+
+    var groupText = personLink.append("text")
+        .attr("dx", function(d, i){
+                return textPointX(groupPath[0][i]) }
+        )
+        .attr("dy", function(d, i){
+                return textPointY(groupPath[0][i]) }
+        )
+        .text(function(d, i) { return contacts[i][0]; });
+
+    // Add the chords.
+    var chord = svg.selectAll(".chord")
+        .data(layout.chords)
+        .enter().append("path")
+        .attr("class", "chord")
+        .style("fill", function(d) { return contacts[d.source.index][1]; })
+        .attr("d", path);
+
+    // Add an elaborate mouseover title for each chord.
+    chord.append("title").text(function(d) {
+         return contacts[d.source.index][0]
+         + " → " + contacts[d.target.index][0]
+         + ": " + d.source.value + (d.source.value != 1 ? " kopplingar": " koppling")
+    });
+
+    function mouseover(d, i) {
+        chord.classed("fade", function(p) {
+            return p.source.index != i && p.target.index != i;
+        });
+    }
+
+    // Initially, show primary person connections
+    chord.classed("fade", showPrimaryPersonConnections);
+    function showPrimaryPersonConnections(p) {
+        return p.source.index != 0;
+    };
+
+    // Show primary person connections when cursor leaves the circle
+    $(svg[0]).on("mouseleave", mouseleave);
+    function mouseleave(d, i) {
+        chord.classed("fade", showPrimaryPersonConnections);
+    }
+
+    // The interval hack is set up because the text length is not computed
+    // until the image has been rendered, which happens when modal window is opened.
+    // Until then getComputedTextLength returns 0.
+    var intervalId = setInterval(moveLeftLabelsToLeft, 250);
+
+    // Move the labels on the left that go over the circle to the left
+    // so that they will be outside the circle, like the ones on right.
+    function moveLeftLabelsToLeft(){
+        groupText.filter(function(d, i) {
+            var textLength = this.getComputedTextLength();
+            if(textLength > 0){
+                clearInterval(intervalId);
+            } else{
+               return;
+            }
+            return this.dx.baseVal.getItem(0).value < 0;
+        }).attr('dx', function(d, i) {
+            return this.dx.baseVal.getItem(0).value - this.getComputedTextLength();
+        });
+
+    }
+}
+
+</script>

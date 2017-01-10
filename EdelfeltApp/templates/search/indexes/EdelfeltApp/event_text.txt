@@ -1,0 +1,5 @@
+{{ object.title }}
+{{ object.mentioned_locations.all | join:" " }}
+
+{{ object.persons.all | join:" " }}
+{{ object.artworks.all | join:" " }}

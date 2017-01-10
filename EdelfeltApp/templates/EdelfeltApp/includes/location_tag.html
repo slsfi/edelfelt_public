@@ -1,0 +1,82 @@
+{#<a href="{{ location.get_absolute_url }}">#}
+                                    <span id="location_span_{{ locationevent.id }}"
+                                          class="label label-default clickable"
+                                          style="display: inline-block;"
+                                          data-toggle="tooltip"
+                                          title="{{ location }}"
+{#                                          data-trigger="hover"#}
+                                          data-placement="bottom"
+                                          title-popover="{{ location }}, {{ country }}"
+                                          rel="popover"
+                                          data-id="{{  locationevent.id }}"
+                                          data-lat="{{ location.lat|stringformat:"f"}}"
+                                          data-long="{{ location.long|stringformat:"f"}}"
+                                            >
+                                        {{ location }} {% if locationevent.unsure %} (osäker koppling) {% endif %}
+                                    </span>
+{#                                </a>#}
+
+
+<div class="row" id="location_popover_content_{{ locationevent.id }}" style="display:none" >
+    <div class="col-md-12">
+        {{ location.comment|default_if_none:"<small>Ingen beskrivning</small>" }}<br>
+    {{ location.classic_municipality }}<br>
+    {{ location.province }}<br>
+        {{ location.country }}
+        {% if location.lat and location.long %}
+        <div id='mapDiv_{{ locationevent.id }}' style="position:relative; width:380px; height:380px;"></div>
+        {% endif %}
+    </div>
+</div>
+
+{#this relies on js on the page, something like this#}
+{% comment %} var tmp = $.fn.popover.Constructor.prototype.show;
+            $.fn.popover.Constructor.prototype.show = function () {
+                tmp.call(this);
+                if (this.options.callback) {
+                    this.options.callback();
+                }
+            }
+
+            $('[rel=popover]').popover({
+                html : true,
+                callback: function() {
+                    var target = $(event.target);
+                    var id = target.attr('data-id');
+                    GetMap(target.attr('data-lat'), $(target).attr('data-long'), id);
+                    $('[rel=popover]').each(function () {
+                        if(!$(this).is(target)){
+                            $(this).popover('hide');
+                        }
+                    })
+                },
+                content: function() {
+                    return $('#location_popover_content_' + $(event.target).attr('data-id')).html();
+                },
+                placement:'top'
+            });{% endcomment %}
+
+<script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0&mkt=sv-SE"></script>
+<script type="text/javascript">
+
+   function GetMap(lat, long, id)
+   {
+       var center = new Microsoft.Maps.Location(lat,long);
+       var mapOptions = {
+           credentials:"Ak2ILYxSbpOd-hvq9Xj7r1ThwydVf_W3iOdLSA8lWk-1lrHqJPTEcTeA9vPaf53o",
+           center: center,
+           zoom: 5,
+           //disableUserInput: true,
+           enableClickableLogo: false,
+           enableSearchLogo: false,
+           width:380,
+           height:380,
+           showDashboard: false,
+           showScalebar: false
+       }
+       var map = new Microsoft.Maps.Map(document.getElementById("mapDiv_" + id), mapOptions);
+       var pin = new Microsoft.Maps.Pushpin(center);
+       map.entities.push(pin);
+   }
+
+</script>

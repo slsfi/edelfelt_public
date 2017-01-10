@@ -1,0 +1,87 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}Edelfelt REST API{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Edelfelt REST API</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>API Contents</h4>
+
+                    <p>
+                        The metadata and pictures of this website is freely available through a REST API with most content licensed as <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0 1.0 universal (CC0 1.0)</a>.
+                        The API is experimental and we welcome ideas and feedback (<SCRIPT TYPE="text/javascript">
+<!--
+// protected email script by Joe Maller
+// JavaScripts available at http://www.joemaller.com
+
+emailE=('johan.kylander' + '&#64;' + 'sls.fi')
+document.write('<A href="mailto:' + emailE + '">' + emailE + '</a>')
+ //-->
+</script>
+
+<NOSCRIPT>
+    <em>Email address protected by JavaScript.<BR>
+    Please enable JavaScript to contact me.</em>
+</NOSCRIPT>
+). If you do something cool with our data, please let us know!
+
+
+
+                    </p>
+                    <p>
+                        Pictures of artworks provided by the Finnish National Gallery are not available through our API. You can however access their metadata through <a href="http://kokoelmat.fng.fi/api/v2support/docs">FNG API</a> links provided (also open data).
+                        Note that you need to <a href="http://kokoelmat.fng.fi/api/v2support/docs/#/key">request an API key from FNG</a> to use it.
+                    </p>
+                    <p>
+                        The <a href="http://fng.fi/en/">Finnish National Gallery</a> has their pictures available online on their
+                        <a href="http://kokoelmat.fng.fi/app?lang=se&si=http%3A%2F%2Fkansallisgalleria.fi%2FP129F.is_about_FACCFC54-5035-47A6-B2BC-B018304D2B01">site</a> which is also linked to by us in the API.
+                        Please refer to FNG for licensing information concerning their API and website.
+                    </p>
+
+                    <h4>Accessing the API</h4>
+                    <p>
+                        Currently no access key or registration is required to access our API. The API is browsable at <a href="/api/">http://edelfelt.sls.fi/api/</a>
+                    </p>
+
+                    <img src="{% static 'EdelfeltApp/api.PNG' %}" alt="Graph of the API layout.">
+
+                    <p>
+                        The easiest way to learn how to use the API is to use the <a href="/api/">browsable interface</a> which shows you the GET url.
+
+                    </p>
+                    <p>
+                        You can list an object type at /api/objectname, e.g. /api/events/. To open a specific object just append its id, e.g. /api/events/13841/, which will return something like this:
+                        </p>
+
+                   <pre>
+{
+    "url": "http://edelfelt.sls.fi/api/events/13841/",
+    "id": 13841,
+    "title": "Edelfelt och ellan har \"kostat på sig lyxen\" att köpa ett turkiskt draperi för att klä över en smutsig \"liggsoffa\", schäslong, som fanns kvar efter Munthe [vars lägenhet de hyrde]; Ellan och Edelfelt har tillsammans egenhändigt klätt över en spegelram med gult siden; de har hängt tavlor på väggarna och möblerat om i Munthes väntrum.",
+    "letter": "http://edelfelt.sls.fi/api/letters/35492/",
+    "order": null,
+    "persons": [
+        "http://edelfelt.sls.fi/api/persons/3036/",
+        "http://edelfelt.sls.fi/api/persons/1178/"
+    ],
+    "year": 1888,
+    "month": 2,
+    "day": 8,
+    "mentioned_locations": [
+        "http://edelfelt.sls.fi/api/locations/6376/"
+    ]
+}
+                   </pre>
+
+                    <p>
+                        Retrieve json without the human readable page by appending a format parameter like this: /api/events/11084/?format=json. Click Filters to see how to search and filter different pages.
+                    </p>
+                </div>
+            </div>
+        </div>
+        </div>
+{% endblock %}

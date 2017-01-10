@@ -1,0 +1,371 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}{{ person.full_name }}{% endblock %}
+{% block meta_description %}{{ person.name }} {{ person.name_info2 |default_if_none:""}} {{ person.name_2_display }} {{ person.name_info3 |default_if_none:""}} {{ person.name_3_display }} i Albert Edelfelts korrespondens. {% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <small>
+                {% if previous %}
+                    <a class="navigation-links" href="{{  previous.get_absolute_url }}">
+                        <span class="glyphicon glyphicon-chevron-left"></span> {{ previous|truncatechars:70}}
+                    </a >
+                {% endif %}
+                {% if next %}
+                    <p class="pull-right">
+                        <a class="navigation-links" href="{{  next.get_absolute_url }}"> {{ next|truncatechars:70 }}
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </a>
+                    </p>
+                {% endif %}
+            </small>
+        </div>
+        <div class="col-md-12">
+            <div id="timeline" style="height: 140px; margin: 0 auto"></div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <span class="label label-info">Person</span>
+                <div class="row">
+                    {% if person_url %}
+                        <div class="col-md-1">
+                            <img src="{{ person_url }}">
+                            <br>
+                            <small>Wikipedia</small>
+                        </div>
+                    {% endif %}
+                    <div class="col-md-11">
+                        <h1 data-id="{{ person.id }}" data-fm_id="{{ person.fm_id }}">{{ person.name }}
+                            <small>{{ person.living_years | default_if_none:""}}</small>
+                        </h1>
+                    <b>
+                        <p class="tight">{% if person.nickname %}<p>Kallad {{ person.nickname }}</p>{% endif %}</p>
+                        <p class="tight">{{ person.name_info2 |default_if_none:""}} {{ person.name_2_display }}</p>
+                        <p class="tight">{{ person.name_info3 |default_if_none:""}} {{ person.name_3_display }}</p>
+                        <p class="tight">{{ person.name_info4 |default_if_none:""}} {{ person.name_4_display }}</p>
+                    </b>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class = "panel-heading">
+                <h3 class="panel-title">Beskrivning</h3>
+            </div>
+            <div class="panel-body">
+                <p>{{ person.description }}</p>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class = "panel-heading">
+                <h3 class="panel-title">Källor</h3>
+            </div>
+            <div class="panel-body">
+                {% if person.source %}
+                    {{ person.source|urlize|linebreaks }}
+                {% endif %}
+                <p class="tight"><a href="{{ person.source_url_1 }}">{{ person.source_url_1_text }}</a></p>
+                <p class="tight"><a href="{{ person.source_url_2 }}">{{ person.source_url_2_text }}</a></p>
+                <p class="tight"><a href="{{ person.source_url_3 }}">{{ person.source_url_3_text }}</a></p>
+                {% if not person.source and not person.source_url_1 and not person.source_url_2 and not person.source_url_3 %}
+                    <small>Inga källor</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Förekomster i brev</h3>
+                <small class="pull-right">
+                    <span class="glyphicon glyphicon-link clickable" data-toggle="modal" data-target="#graphModal">
+                        <a> Visa personkopplingar för {{ person.name }}</a>
+                    </span>
+                </small>
+            </div>
+
+            <div class="list-group">
+                {% regroup person.personevents.all|dictsort:"date" by event.letter as letter_list %}
+                {% for letter in letter_list %}
+                    <div class="list-group-item">
+                    <a href="{{ letter.grouper.get_absolute_url }}">
+                        <h5>{{  letter.grouper  }} <small>{{ letter.grouper.date }}</small></h5>
+                    </a>
+
+                    {% for artworkevent in letter.list %}
+                        <div class="row">
+                            <div class="col-md-7">
+                               {% if artworkevent.unsure %}
+                                   <small><span class="badge">Osäker koppling</span></small>
+                               {% endif %}
+                               {{ artworkevent.event.title | default:"<i>Händelsen har ingen titel</i>"}}
+
+                                <div class="row">
+                                    {% for artwork in artworkevent.event.artworks.all %}
+                                        <div class="col-md-3">
+                                            {% if artwork.files.count > 0 %}
+                                                <a href="javascript:setArtworkImage('{% static artwork.files.all.0.thumbnail_path %}', {{ forloop.counter0 }}, {{ artworkevent.event.id }})">
+                                                        <img src="{% static artwork.files.all.0.thumbnail_path %}" height="160pt">
+                                                </a>
+                                            {% endif %}
+                                            <a href="{{ artwork.get_absolute_url }}">
+                                                <span class="label label-primary" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ artwork }}">{{ artwork | truncatechars:30}}</span>
+                                            </a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                            {% for person in artworkevent.event.persons.all %}
+                                                <a href="{{ person.get_absolute_url }}">
+                                                    <span class="label label-info" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{ person.description }} {{ person.living_years | default:"" }}"><small>{{ person.name }}</small></span>
+                                                </a>
+                                            {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="col-md-5">
+                                    {% if artworkevent.event.artworks.all.0.files.all.0 %}
+                                    <a href="#imgModal">
+                                    <img id="artwork_img_{{ artworkevent.event.id }}" src="{% static artworkevent.event.artworks.all.0.files.all.0.thumbnail_path %}" class="img-responsive " data-toggle="tooltip" data-placement="bottom" data-original-title="{{ event.artworks.first.comments }}" onclick="showModal('{% static artworkevent.event.artworks.all.0.files.all.0.thumbnail_path %}')"/>
+                                    {% endif %}
+                                        </a>
+                               </div>
+                        </div>
+                            {% endfor %}
+
+                      </div>
+                {% empty %}
+                    Inga händelser
+                {% endfor %}
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal for graph-->
+    <div class="modal fade modal-wide" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel"><small>Grafen visar vilka personer som är kopplade till <strong>{{ person.name }}</strong> via händelser samt deras inbördes kopplingar.</small></h4>
+                </div>
+                <div class="modal-body">
+                    {% include 'EdelfeltApp/connection_graph.html' with person=person %}
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+        <!-- Modal for  artworks-->
+    <div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel"><small></small></h4>
+                </div>
+                <div class="modal-body">
+                    <a href="javascript:modalImageClick()">
+                        <img id="modal_img" src="" height="100%">
+                    </a>
+                    <a id="modal_link" href=""></a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+{% endblock %}
+{% block scripts %}
+    <script src="{% static "EdelfeltApp/highcharts.js" %}"></script>
+    <script src="{% static "EdelfeltApp/broken-axis.js" %}"></script>
+    <script type='text/javascript'>
+        $(".modal-wide").on("show.bs.modal", function() {
+            var height = $(window).height() - 100;
+            $(this).find(".modal-body").css("max-height", height);
+        });
+
+
+        function setArtworkImage(url, i, event_id)
+        {
+            $("#artwork_img_" + event_id).attr('src', url);
+            //$("#modal").attr('src', url);
+            $("#artwork_img_" + event_id).attr('onClick', "showModal('" + url + "')");
+        }
+
+        function showModal(url){
+            $("#modal_img").attr("src", url);
+            $("#imgModal").modal('show');
+        }
+    </script>
+
+
+    <script>
+        function weekMonday(dayNumber){
+            if(dayNumber == 0){
+                return 6;
+            }
+            else{
+                return dayNumber-1
+            }
+
+        }
+        $(function () {
+            var weekdays ={
+                0:'Må',
+                1:'Ti',
+                2:'Ons',
+                3:'To',
+                4:'Fre',
+                5:'Lö',
+                6:'Sö'
+
+            }
+            $('#timeline').highcharts({
+                chart: {
+                    type: 'scatter'
+                },
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                legend:{
+                    enabled:true
+                },
+                title: {
+                    text: null
+
+                },
+                plotOptions: {
+                    series: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function() {
+                                    location.href = this.options.url;
+                                }
+                            }
+                        }
+                    }
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%e. %b',
+                        year: '%b'
+                    },
+                    labels: {
+                            formatter: function() {
+                                var d = new Date(this.value);
+                                if (d.getUTCMonth() == 0){
+                                    return Highcharts.dateFormat("%b<br>%Y",this.value); // if jan display year
+                                }else{
+                                    return Highcharts.dateFormat("%b",this.value); // just month
+                                }
+
+
+                                var monthStr = Highcharts.dateFormat('%b', this.value);
+                                //var firstLetter = monthStr.substring(0, 1);
+                                return monthStr;
+                            }
+                        },
+                     plotLines: [{
+                            color: '#428bca', // Color value
+                            dashStyle: 'shortdot', // Style of the plot line. Default to solid
+                            value: Date.UTC(1867, 10, 1), // Value of where the line will appear
+                            width: '4' // Width of the line
+                        },
+                            {
+                            color: '#428bca', // Color value
+                            dashStyle: 'shortdot', // Style of the plot line. Default to solid
+                            value: Date.UTC(1877, 08, 1), // Value of where the line will appear
+                            width: '4' // Width of the line
+                        }],
+                        breaks: [{
+                            from: Date.UTC(1867, 10, 1),
+                            to: Date.UTC(1871, 4, 1)
+                            //breakSize: 1
+                        },
+                            {
+                            from: Date.UTC(1877, 08, 1),
+                            to: Date.UTC(1884, 11, 1)
+                            //breakSize: 1
+                        }]
+
+                },
+                yAxis: {
+                    tickInterval:1,
+                    title: {
+                        text: null
+                    },
+                    min: 0,
+                    max: 6,
+                    labels:{
+                        enabled:true,
+                        formatter: function() {
+                            var value = weekdays[this.value];
+                            return value !== 'undefined' ? value : this.value;
+                        }
+                    }
+
+                },
+                tooltip: {
+                    formatter: function() {
+                        if(this.series.name == 'Vertical'){
+                            return false;
+                        }
+                        else{
+                            return '<b>'+ this.series.name +'</b><br/>'+
+                                /*Highcharts.dateFormat('%e. %b', this.x) +': '+*/ this.key;
+                        }
+                    }
+                },
+
+                series: [{
+                    name:'Brev som {{ person.name }} nämns i är markerade med blått',
+
+                    lineWidth : 0,
+                    // Define the data points. All series have a dummy year
+                    // of 1970/71 in order to be compared on the same x axis. Note
+                    // that in JavaScript, months start at 0 for January, 1 for February etc.
+                    data: [
+                        {% for l in letters %}
+                            {% if l.start_year_no and l.start_month_no and l.start_day_no %}
+                                {
+                                    x:Date.UTC({{ l.start_year_no}}, {{ l.start_month_no }}-1, {{ l.start_day_no | default_if_none:1}}),
+                                    y:weekMonday({{ l.date |date:"w" }}),
+                                    name:'{{ l }}',
+                                    url:'{{ l.get_absolute_url }}',
+                                    {% if l not in related_letters %}
+                                        marker:{ fillColor: '#f0ad4e'},
+                                    {% endif %}
+                                },
+                            {% endif %}
+                        {% endfor %}
+                    ]
+                },
+                ]
+            });
+        });
+
+
+    </script>
+<link href="{% static "EdelfeltApp/modal.css" %}" rel="stylesheet">
+    {% include 'EdelfeltApp/connection_graph_scripts.html' %}
+{% endblock %}

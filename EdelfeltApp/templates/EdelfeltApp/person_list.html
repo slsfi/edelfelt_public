@@ -1,0 +1,33 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}Personförteckning ({{ type }}){% endblock %}
+{% block meta_description %}Lista ({{ type }}) över personer som förekommer i brev från Albert Edelfelt till hans mor Alexandra Edelfelt.{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Personförteckning</h3>
+        </div>
+    <div class="panel-body">
+        <div class="list-group">
+            {% for person in persons %}
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-5 tight">
+                            <h4><a href="{{ person.get_absolute_url }}">
+                            {{ person.full_name }}
+                            </a></h4>
+                        </div>
+
+                        <div class="col-md-5">
+                            {{ person.description }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ person.living_years | default_if_none:"" }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    </div>
+{% endblock %}

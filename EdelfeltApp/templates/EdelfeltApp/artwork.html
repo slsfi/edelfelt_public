@@ -1,0 +1,215 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% load html_formatting %}
+{% block pre_title %}{{ artwork }}{% endblock %}
+{% block meta_description %}Albert Edelfelt: {{ artwork }} porträtt, målning, portrait, painting, sketch {% endblock %}
+{% block head %}
+    <meta property="og:image" content="http://{{ host }}{% if artwork.artworkfiles.all.0 %}{% static artwork.artworkfiles.all.0.file.thumbnail_path %}{% else %}{% static 'EdelfeltApp/SLS_logo.png' %}{% endif %}"/>
+    <meta property="og:title" content="Albert Edelfelt: {{ artwork }}"/>
+    <meta property="og:description" content="{{ artwork.description }} {{ artwork.comments }}"/>
+{% endblock %}
+{% block content %}
+    <div>
+        <div class="row">
+            <div class="col-md-12">
+                <small>
+                    {% if previous %}
+                        <a class="navigation-links" href="{{ previous.get_absolute_url }}">
+                            <span class="glyphicon glyphicon-chevron-left"></span> {{ previous|truncatechars:70}}
+                        </a >
+                    {% endif %}
+                    {% if next %}
+                        <p class="pull-right">
+                            <a class="navigation-links" href="{{ next.get_absolute_url  }}"> {{ next|truncatechars:70 }}
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            </a>
+                        </p>
+                    {% endif %}
+                </small>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <span class="label label-primary">Konstverk</span>
+                    <h1>{{ artwork }}
+                        {#                        <small> {{ artwork.title3}}</small>#}
+                    </h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                {% if artwork.description  %}
+                    <div class="panel panel-default">
+                        <div class = "panel-heading">
+                            <h3 class="panel-title">Bertel Hintzes beskrivning</h3>
+                        </div>
+                        <div class="panel-body">
+                            <p>{{ artwork.description_anchors | safe}}</p>
+
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if artwork.comments  %}
+                    <div class="panel panel-default">
+                        <div class = "panel-heading">
+                            <h3 class="panel-title">Redaktionens kommentarer</h3>
+                        </div>
+                        <div class="panel-body">
+                            <p>{{ artwork.comments_anchors | safe }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Förekomster i brev</h3>
+                    </div>
+                    <div class="list-group">
+                        {% regroup artwork.artworkevents.all|dictsort:"date" by event.letter as letter_list %}
+                        {% for letter in letter_list %}
+                            <div class="list-group-item">
+                                <p>
+                                    <a href="{{ letter.grouper.get_absolute_url }}">
+                                        <h5>{{  letter.grouper  }} <small>{{ letter.grouper.date }}</small></h5>
+                                    </a>
+
+                                    {% for artworkevent in letter.list %}
+                                        {% if artworkevent.unsure %}
+                                            <small><span class="badge">Osäker koppling</span></small>
+
+                                        {% endif %}
+                                        {{ artworkevent.event.title }}
+                                        {% for person in event.persons.all %}
+                                            <a href="{{ person.get_absolute_url }}">
+                                                <span class="label label-info" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{ person.description }} {{ person.living_years | default:"foo" }}"><small>{{ person.name }}</small></span>
+                                            </a>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% comment %}{% if artwork.exhibition_history %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Utställningshistoria</h3>
+                        </div>
+                        <div class="panel-body">
+                            {{ artwork.exhibition_history }}
+                        </div>
+                    </div>
+                {% endif %}{% endcomment %}
+
+            </div>
+
+
+            <div class="col-md-5">
+                {% if artwork.files.all.count > 0 %}
+                    <div class="row">
+                        <div class="col-md-12">
+{#                            <a href="javascript:showModal()">#}
+                                {% with artwork.artworkfiles.all.0 as first %}
+                                    <a href="javascript:setArtworkImage('{% static first.file.thumbnail_path %}', '{%  static first.file.path %}', '{{ first.file.fng_url }}', '{{ first.get_type_display }} - {{ first.file.description }}', '{% if first.has_main_work %}{{ first.file.main_artwork.get_absolute_url }}{% endif %}', '{% if first.has_main_work %}Gå till bildens huvudverk {{ first.file.main_artwork }}{% endif %}')">
+                                <img id="artwork_img" src="{% static first.file.thumbnail_path %}" alt="{{ artwork }} - {{ first.file.description }}" data-large="{% static first.file.path %}" data-order={{ first.order }} width="100%">
+                            </a>
+                            <small><a style="color:#B1B1B1" href="{{ first.file.fng_url }}">{{ first.get_type_display }} - {{ first.file.description }}</a></small>
+                            {% endwith %}
+                        </div>
+                    </div>
+                    {% if artwork.files.all.count > 1 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="mygallery" >
+                                    {% for artworkfile in artwork.artworkfiles.all|slice:"1:" %}
+                                        <a fm_id="{{ artworkfile.fm_id }}" href="javascript:setArtworkImage('{% static artworkfile.file.thumbnail_path %}', '{%  static artworkfile.file.path %}', '{{ artworkfile.file.fng_url }}', '{{ artworkfile.get_type_display }} - {{ artworkfile.file.description }}', '{% if artworkfile.has_main_work %}{{ artworkfile.file.main_artwork.get_absolute_url }}{% endif %}', '{% if artworkfile.has_main_work %}Gå till bildens huvudverk {{ artworkfile.file.main_artwork }}{% endif %}')">
+                                            <img data-order={{ artworkfile.order }} src="{% static artworkfile.file.thumbnail_path %}" class="img-responsive" onclick=""
+                                                 alt="{{ artwork }} - {{ artworkfile.get_type_display }} - {{ artworkfile.file.description }}">
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center"><h2><small>Det finns inga bilder för det här konstverket.</small></h2></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for  artworks-->
+    <div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel"><small></small></h4>
+                </div>
+                <div class="modal-body">
+                    <a href="" id="full_image" target="_blank">
+                        <img id="modal_img" src="" class="img-responsive" >
+                    </a>
+                    <a href="" target="_blank" id="fng_anchor"></a><br>
+                    <a href="" id="main_anchor"></a>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <link rel="stylesheet" href="{% static 'EdelfeltApp/justifiedgallery/justifiedGallery.min.css' %}" />
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function setArtworkImage(url, large_url, fng_url, text, main_url, main_text){
+            //$("#artwork_img").attr('src', url);
+            $("#modal_img").attr("src", large_url);
+
+            //$("#artwork_img").attr('data-large', large_url);
+            $("#full_image").attr("href", large_url);
+
+            $("#fng_anchor").attr('href', fng_url);
+            $("#fng_anchor").text(text);
+
+            $("#main_anchor").attr('href', main_url);
+            $("#main_anchor").text(main_text);
+            showModal();
+        }
+
+        function showModal(){
+            //url = $("#artwork_img").attr("data-large");
+            //$("#modal_img").attr("src", url);
+            //$("#full_image").attr("href", url);
+            $("#imgModal").modal('show');
+
+        }
+
+         $('#modal').on('show', function () {
+           $(this).find('.modal-body').css({
+                  width:'auto', //probably not needed
+                  height:'auto', //probably not needed
+                  'max-height':'100px'
+           });
+        });
+    </script>
+
+    <script src="{% static 'EdelfeltApp/justifiedgallery/jquery.justifiedGallery.min.js' %}"></script>
+    <script>
+        $( document ).ready(function() {
+            $("#mygallery").justifiedGallery({
+                rowHeight: 150,
+                margins: 5
+            });
+        });
+    </script>
+
+
+{% endblock %}

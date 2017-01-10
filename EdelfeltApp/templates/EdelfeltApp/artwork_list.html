@@ -1,0 +1,40 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}Verkförteckning{% endblock %}
+{% block meta_description %}Lista på konstverk som omnämns i Albert Edelfelts brev till sin mor.{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Verkförteckning</h3>
+        </div>
+    <div class="panel-body">
+        <div class="list-group">
+            {% for artwork in artworks %}
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-3">
+
+                            <h4><small>{{ artwork.title }}</small> <a href="{{ artwork.get_absolute_url }}">{{ artwork }}</a></h4>
+                            {% if artwork.files.first %}
+                                <br>
+                                <img src="{% static artwork.files.first.thumbnail_path %}" class="img-responsive">
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-9">
+                            {% if artwork.description %}
+                                <p><b>Hintze: </b>
+                                {{ artwork.description | safe}}</p>
+                            {% endif %}
+                            {% if artwork.comments %}
+                                <p><b>Redaktionen: </b>
+                                {{ artwork.comments | safe}}</p>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

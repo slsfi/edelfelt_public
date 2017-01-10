@@ -1,0 +1,492 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}{% if letter.date %}{{ letter.date }} {% else %}{{letter.date_interval}}{% endif %}{% endblock %}
+{% block meta_description %}Brev från Albert Edelfelt till hans mor Alexandra Edelfelt {{ letter }} {{ letter.date_interval }}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <small>
+                {% if previous %}
+
+                    <a class="navigation-links" href="{{ previous.get_absolute_url }}">
+                        <span class="glyphicon glyphicon-chevron-left"></span> {{ previous|truncatechars:70}}
+                    </a >
+
+                {% endif %}
+                {% if next %}
+                    <p class="pull-right">
+                        <a class="navigation-links" href="{{ next.get_absolute_url }}"> {{ next|truncatechars:70 }}
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </a>
+                    </p>
+                {% endif %}
+            </small>
+        </div>
+        {% if letter.start_month_no %}
+            <div class="col-md-12">
+                <div id="timeline" style="height: 100px; margin: 0 auto"></div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <a href="{% url 'EdelfeltApp.views.letter_list' %}">
+                    <span class="label label-warning">Brev</span>
+                </a>
+                <small>Permanent id <a href="http://urn.fi/{{ letter.urn }}">{{ letter.urn }}</a><a href="{% url 'copyright' %}"> <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a></small>
+                <h1>{{ letter }}
+                    <small>{{ letter.date_interval }}</small>
+                </h1>
+                <i>
+                    {% for location in letter.locations.all %}
+                        <a href="{{ location.get_absolute_url }}">{{ location }}</a>
+                    {% endfor %}
+                </i>
+                {#                <p>{{ letter.language }}</p>#}
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <p>
+                {% for file in letter.files.all %}
+                    <a href="javascript:setLetterImage('{% static file.thumbnail_path %}', {{ forloop.counter0 }})">
+                        <img src="{% static file.thumbnail_path %}" width="100pt">
+                    </a>
+
+                {% endfor %}
+            </p>
+            <p>
+                {% for subject in letter.subjects.all %}
+                    <a href="{{ subject.get_absolute_url }}">
+                        <span class="label label-default">{{ subject }}</span>
+                    </a>
+                {% endfor %}
+            </p>
+            <div class="panel panel-default">
+                <div class = "panel-heading">
+                    <h3 class="panel-title">Beskrivning</h3>
+                </div>
+                <div class="panel-body">
+
+                    <p>{{ letter.description | safe }}</p>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <a href="javascript:showLetterModal()">
+                <img id="letter_image" src="{% static letter.files.first.thumbnail_path %}" width="100%">
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Innehåll</h3>
+                </div>
+
+                <ul class="list-group">
+                    {#            <div class="list-group">#}
+                    {% for event, files in event_files.items %}
+                        <li class="list-group-item" style="padding-top: 5px; padding-bottom: 5px">
+                            <div class="row">
+                                {% if files %}
+                                    <div class="col-md-8 tight">
+                                {% else %}
+                                    <div class="col-md-12 tight">
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-md-12 tight">
+
+                                        <p data-order="{{ event.order }}" id="{{ event.fm_id }}">{{ event.title }}</p>
+                                        {% for locationevent in event.locationevents.all %}
+                                            {% with locationevent.location as location %}
+                                                {% include 'EdelfeltApp/includes/location_tag.html' %}
+                                            {% endwith %}
+                                        {% endfor %}
+                                        {% for pe in event.personevents.all %}
+                                            <a href="{{ pe.person.get_absolute_url }}">
+                                                <span class="label label-info" style="display: inline-block;" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ pe.person.description }} {{ pe.person.living_years | default_if_none:""}}"> {{ pe.person.name}}{% if pe.unsure %} (osäker koppling) {% endif %} </span>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% if event.artworks.count > 0 %}
+                                    {% for artwork in event.artworks.all %}
+                                        {% if forloop.counter ==  1 or forloop.counter ==  5 or forloop.counter ==  9 or forloop.counter ==  13 or forloop.counter ==  17 or forloop.counter ==  21%}
+                                            <div class="row">
+                                        {% endif %}
+                                        {% if files %}
+                                            <div class="col-md-3">
+                                        {% else %}
+                                            <div class="col-md-2">
+                                        {% endif %}
+                                    {% if artwork.files.count > 0 %}
+                                        <a href="javascript:setArtworkImage('{% static artwork.files.all.0.thumbnail_path %}', {{ forloop.counter0 }}, {{ event.id }})">
+                                            <img src="{% static artwork.files.all.0.thumbnail_path %}" height="160pt">
+                                        </a>
+                                    {% else %}
+                                        <img src="{% static 'EdelfeltApp/placeholder.png' %}">
+                                    {% endif %}
+                                    <br>
+                                    <a href="{{ artwork.get_absolute_url }}">
+                                        <span class="label label-primary" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ artwork }}">{{ artwork | truncatechars:30}}</span>
+                                    </a>
+                                    </div>
+                                    {% if forloop.counter ==  4 or forloop.counter ==  8 or forloop.counter ==  12 or forloop.counter ==  16 or forloop.counter ==  20 or forloop.last%}
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    {% comment %} </div>
+                        </div>{% endcomment %}
+                                {% endif %}
+                                </div> <!-- 10-12 -->
+                                {% if files %}
+                                    <div class="col-md-4">
+                                        <a href="#imgModal">
+                                            <img id="artwork_img_{{ event.id }}" src="{% static files.0.thumbnail_path %}" class="img-responsive " data-toggle="tooltip" data-placement="bottom" data-original-title="{{ event.artworks.first.comments }}" onclick="showModal('{% static files.0.path %}')"/>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                                </div>
+                        </li>
+                    {% empty %}
+                        Inga händelser
+                    {% endfor %}
+                </ul>
+            </div>
+            {#            </div>#}
+        </div>
+
+
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel"><small></small></h4>
+                </div>
+                <div class="modal-body">
+                    <a href="javascript:modalImageClick()">
+                        <img id="modal_img" src="" width="100%">
+                    </a>
+                    <a id="modal_link" href=""></a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <!-- Letter modal -->
+    <div class="modal fade modal-wide" id="letterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel"><small></small></h4>
+                </div>
+                <div class="modal-body">
+                    <div id="modal_carousel" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators -->
+                        <ol class="carousel-indicators">
+                            {% for file in letter.files.all %}
+                                <li data-target="#modal_carousel" data-slide-to="{{ forloop.counter0 }}" data-id="{{ file.id }}" {% if forloop.first %} class="active" {% endif %}>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner">
+                            {% for file in letter.files.all %}
+                                <div class="item {% if forloop.first %} active {% endif %}">
+                                    <a href="{% static file.path %}" target="_blank"><img src="{% static file.path %}" width="100%"></a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <!-- Controls -->
+
+                        <a class="left carousel-control" href="#modal_carousel" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left"></span>
+                        </a>
+                        <a class="right carousel-control" href="#modal_carousel" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </a>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+{% endblock %}
+{% block scripts %}
+    <!--- scripts --->
+    <script src="{% static "EdelfeltApp/highcharts.js" %}"></script>
+    <script src="{% static "EdelfeltApp/broken-axis.js" %}"></script>
+    <script type='text/javascript'>
+        $(".modal-wide").on("show.bs.modal", function() {
+            var height = $(window).height() -50;
+            $(this).find(".modal-body").css("max-height", height);
+        });
+
+        function showModal(url){
+            $("#modal_img").attr("src", url);
+            $("#imgModal").modal('show');
+        }
+
+        function showLetterModal(){
+            $("#letterModal").modal('show');
+        }
+
+        function setLetterImage(url, i)
+        {
+            $("#letter_image").attr('src', url);
+            $("#modal_carousel").carousel(i);
+        }
+
+        function setArtworkImage(url, i, event_id)
+        {
+            $("#artwork_img_" + event_id).attr('src', url);
+            //$("#modal").attr('src', url);
+            $("#artwork_img_" + event_id).attr('onClick', "showModal('" + url + "')");
+        }
+
+        function modalImageClick(){
+            window.open($("#modal_img").attr("src"),"_blank");
+        }
+
+
+
+
+    </script>
+    {% if letter.start_month_no %}
+        <script>
+            function weekMonday(dayNumber){
+                if(dayNumber == 0){
+                    return 6;
+                }
+                else{
+                    return dayNumber-1
+                }
+
+            }
+            $(function () {
+                var weekdays ={
+                    0:'Må',
+                    1:'Ti',
+                    2:'Ons',
+                    3:'To',
+                    4:'Fre',
+                    5:'Lö',
+                    6:'Sö'
+
+                }
+
+                Highcharts.setOptions({
+                    lang: {
+                        shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
+                    } });
+
+                $('#timeline').highcharts({
+                    chart: {
+                        type: 'scatter'
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    legend:{
+                        enabled:false
+                    },
+                    title: {
+                        text: null
+
+                    },
+                    plotOptions: {
+                        series: {
+                            cursor: 'pointer',
+                            point: {
+                                events: {
+                                    click: function() {
+                                        location.href = this.options.url;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        labels: {
+                            formatter: function() {
+                                var d = new Date(this.value);
+                                if (d.getUTCMonth() == 0){
+                                    return Highcharts.dateFormat("%b<br>%Y",this.value); // if jan display yeat
+                                }else{
+                                    return Highcharts.dateFormat("%b",this.value); // just month
+                                }
+
+
+                                var monthStr = Highcharts.dateFormat('%b', this.value);
+                                //var firstLetter = monthStr.substring(0, 1);
+                                return monthStr;
+                            }
+                        },
+                        breaks: [{
+                            from: Date.UTC(1867, 10, 1),
+                            to: Date.UTC(1871, 1, 1)
+                            //breakSize: 1
+                        },
+                            {
+                            from: Date.UTC(1875, 12, 1),
+                            to: Date.UTC(1884, 11, 1)
+                            //breakSize: 1
+                        }],
+
+                        plotLines: [{
+                            color: '#428bca', // Color value
+                            dashStyle: 'shortdot', // Style of the plot line. Default to solid
+                            value: Date.UTC(1867, 10, 1), // Value of where the line will appear
+                            width: '4' // Width of the line
+                        },
+                            {
+                            color: '#428bca', // Color value
+                            dashStyle: 'shortdot', // Style of the plot line. Default to solid
+                            value: Date.UTC(1877, 08, 1), // Value of where the line will appear
+                            width: '4' // Width of the line
+                        }],
+                        breaks: [{
+                            from: Date.UTC(1867, 10, 1),
+                            to: Date.UTC(1871, 4, 1)
+                            //breakSize: 1
+                        },
+                            {
+                            from: Date.UTC(1877, 08, 1),
+                            to: Date.UTC(1884, 11, 1)
+                            //breakSize: 1
+                        }]
+                        {% comment %}     dateTimeLabelFormats: { // don't display the dummy year
+                                 month: '%e. %b',
+                                 year: '%b'
+                             }{% endcomment %}
+                    },
+                    yAxis: {
+                        tickInterval:1,
+                        title: {
+                            text: null
+                        },
+                        min: 0,
+                        max: 6,
+                        labels:{
+                            enabled:true,
+                            formatter: function() {
+                                var value = weekdays[this.value];
+                                return value !== 'undefined' ? value : this.value;
+                            }
+                        }
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            if(this.series.name == 'Vertical'){
+                                return false;
+                            }
+                            else{
+                                return '<b>'+ this.series.name +'</b><br/>'+
+                                            /*Highcharts.dateFormat('%e. %b', this.x) +': '+*/ this.key;
+                            }
+                        }
+                    },
+
+                    series: [{
+                        name:'Brev',
+
+                        lineWidth : 0,
+                        data: [
+                            {% for l in letters %}
+                                {% if l.start_year_no and l.start_month_no and l.start_day_no %}
+                                    {
+                                        x:Date.UTC({{ l.start_year_no}}, {{ l.start_month_no }}-1, {{ l.start_day_no }}),
+                                        y:weekMonday({{ l.date |date:"w" }}),
+                                        name:'{{ l }}',
+                                        url:'{{  l.get_absolute_url }}',
+                                        {% if l != letter %}
+                                            marker:{ fillColor: '#f0ad4e'}
+                                        {% endif %}
+                                    },
+                                {% endif %}
+                            {% endfor %}
+                        ]
+                    },
+                        {
+                            type: 'line',
+                            name: 'Vertical',
+                            data: [
+                                {
+                                    x:Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no | default_if_none:1}}),
+                                    y:0,
+                                    url:'{{ letter.get_absolute_url }}'
+                                },
+                                {
+                                    x:Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no | default_if_none:1}}),
+                                    y:10,
+                                    url:'{{ letter.get_absolute_url }} }}'
+                                },{% comment %}//[Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no }}),0],
+                                //[Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no }}),10]{% endcomment %}
+                            ],
+                            {% comment %}[[Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no }}),0],[Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no }}),10]],{% endcomment %}
+                            marker: {
+                                radius: 0.5,
+                                lineColor: 'Gray'
+                            },
+                            lineWidth:0.3
+                        }
+                    ]
+                });
+            });
+
+
+            var tmp = $.fn.popover.Constructor.prototype.show;
+            $.fn.popover.Constructor.prototype.show = function () {
+                tmp.call(this);
+                if (this.options.callback) {
+                    this.options.callback();
+                }
+            };
+
+            $('[rel=popover]').popover({
+                html : true,
+                callback: function() {
+                    var id = this.id;
+                    var lat = this.lat;
+                    var long = this.long;
+
+                    if(lat != ""){
+                        GetMap(lat, long, id);
+                    }
+                    var target = $('#location_span_' + id);
+                    $('[rel=popover]').each(function () {
+                        console.debug(this);
+                        console.debug(target);
+                        if(!$(this).is(target)){
+                            $(this).popover('hide');
+                        }
+                    });
+                },
+                content: function() {
+                    return $('#location_popover_content_' + $(this).attr('data-id')).html();
+                },
+                placement:'top'
+            });
+        </script>
+    {% endif %}
+
+{% endblock %}

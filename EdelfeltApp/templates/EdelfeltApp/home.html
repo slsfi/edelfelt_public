@@ -1,0 +1,336 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}SLS{% endblock %}
+{% block body_class %}frontpage{% endblock %}
+{% block above_menu %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <img src="{% static 'EdelfeltApp/logo_vit.png' %}" class="frontpage-logo" alt="Svenska litteratursällskapet i Finland" />
+                <div class="jumbotron">
+                    <div class="container">
+                        <h1>Albert Edelfelts brev</h1>
+                        <p>En djupdykning i Albert Edelfelts liv och konstnärliga arbete genom hans brev till sin mor Alexandra Edelfelt 1867−1877 och 1885−1888
+</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+{% block head %}
+    <meta property="og:image" content="http://{{ host }}/static/jpg/a0261300.jpg"/>
+    <meta property="og:title" content="Albert Edelfelts brev. En djupdykning i Albert Edelfelts liv och konstnärliga arbete genom hans brev till sin mor Alexandra Edelfelt 1867−1877 och 1885−1888"/>
+
+    <meta property="og:description" content="Albert Edelfelt är en av Finlands genom tiderna mest framstående bildkonstnärer. I den här elektroniska brev- och konstutgåvan finns nu {{ letters.count }} brev som Edelfelt skrev till sin mor Alexandra Edelfelt under åren 1867−1874 och 1885-1888, ibland med bara några dagars mellanrum. Breven är ett fönster in i den finländska konstens guldålder, och in i det sena 1800-talets finländska, nordiska och europeiska kulturhistoria. Här hittar du också en omfattande samling bilder av konstverk och skisser. Målet med utgåvan är att erbjuda en aldrig förut skådad rekonstruktion av Edelfelts konstnärskap, både i text och i bild. Vi uppdaterar utgåvan kontinuerligt och flera årgångar av brev och konst inkluderas. Sammanlagt kommer upp mot 1300 brev från åren 1867−1901 att ingå i utgåvan. Är det något du inte hittar nu kanske det finns nästa gång!"/>
+{% endblock %}
+
+{% block home_end_container %}</div>{% endblock %}
+
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <a href="http://www.sls.fi"><img src="{% static 'EdelfeltApp/SLS_logo.png' %}"></a>
+        </div>
+        <div class="col-md-6">
+            <div class="pull-right">
+            <a href="http://www.fng.fi/"><img src="{% static 'EdelfeltApp/nationalgalleriet.png' %}"></a>
+                </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <p>
+                <h2 style="display:inline-block; margin:0;">Albert Edelfelt</h2> är en av Finlands genom tiderna mest framstående bildkonstnärer. I den här elektroniska brev- och konstutgåvan finns nu {{ letters|length}} brev som Edelfelt skrev till sin mor Alexandra Edelfelt under åren 1867−1877 och 1885−1888, ibland med bara några dagars mellanrum. Breven är ett fönster in i den finländska konstens guldålder, och in i det sena 1800-talets finländska, nordiska och europeiska kulturhistoria. Här hittar du också en omfattande samling bilder av konstverk och skisser. Målet med utgåvan är att erbjuda en aldrig förut skådad rekonstruktion av Edelfelts konstnärskap, både i text och i bild. Vi uppdaterar utgåvan kontinuerligt och flera årgångar av brev och konst inkluderas. Sammanlagt kommer upp mot 1300 brev från åren 1867−1901 att ingå i utgåvan. Är det något du inte hittar nu kanske det finns nästa gång!
+                <button id="moreButton" class="btn btn-link" href="#" onclick="showMore()">Läs mera</button>
+            </p>
+            <p class="moreText" style="display: none">
+                    Albert Edelfelt (1854−1905) berättar i breven om sitt arbete, dagens aktualiteter och människorna han mötte under sina vistelser i Europas metropoler, under resor i Spanien och på Rivieran och hemma på Haiko och i Helsingfors. Genom breven möter vi flera av det sena 1800-talets stora frågor och ser Albert Edelfelt i olika roller.
+            </p>
+            <p class="moreText" style="display: none">
+                Originalbreven är skannade och publiceras med referat av innehållet. Du kan göra sökningar på konstverk, personer och platser i breven. Dessutom har varje brev försetts med sökord om de ämnen som Edelfelt behandlar.
+
+            </p>
+            <p class="moreText" style="display: none">
+                I samarbete med Nationalgalleriet erbjuder denna webbutgåva en stor samling av Albert Edelfelts konstverk och skisser. Konstverken och breven kan här för första gången i stor skala studeras parallellt. Konstverkens tillblivelse kan i många fall ses i form av olika på varandra följande skisser samtidigt som processen skildras i ord i många brev.
+            </p>
+            <p class="moreText" style="display: none">
+                Systrarna Berta och Annie Edelfelt donerade brevsamlingen 1935 till Svenska litteratursällskapet i Finland där den ingår i det Edelfeltska släktarkivet med signum SLSA 367. Breven har digitaliserats 2010–2011 och publiceras från och med hösten 2014 i denna digitala brev- och konstutgåva.
+            </p>
+            <p class="moreText" style="display: none">
+                De brev och brevfragment som tidigare har publicerats i boken <i>Albert Edelfelt och Ryssland</i> (utg. Maria Vainio & Rainer Knapas 2004) finns också här publicerade i fulltext, det vill säga avskrivna i sin helhet.
+            </p>
+
+            <p class="moreText" style="display: none">
+               Samtliga brev från Albert Edelfelt till Alexandra Edelfelt i Svenska litteratursällskapet ägo har skannats och lagts ut på den nationella sökportalen för bibliotek, arkiv och museer, <b><a href="https://www.finna.fi/Collection/sls.SLSA%2B367?lng=sv">Finna</a></b>. Alla brev kan läsas i Finna, men portalen ger inte referat, fulltextversioner eller möjligheter till innehållssökningar.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 ">
+            {% if letter.start_month_no %}
+                <div class="col-md-12">
+                    <div id="timeline" style="height: 140px; margin: 0 auto"></div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            {% if letter.files.all %}
+                    <a href="{{ letter.get_absolute_url }}">
+                        <img src="{% static letter.files.first.thumbnail_path %}" class="img-responsive">
+                    </a>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <p>
+                I ett <strong><a href="{% url 'EdelfeltApp.views.letter_list' %}">brev</a></strong> med rubriken
+                <strong><a href="{{ letter.get_absolute_url }}">{{ letter }}</a></strong>
+                skriver Albert Edelfelt om <strong><a href="{% url 'EdelfeltApp.views.artwork_gallery' %}">verket</a> <a href="{{ artwork.get_absolute_url }}">{{ artwork }}</a>.</strong>
+                Innehållet sammanfattas så här.<br>
+
+            </p>
+            <p><i>
+                {% for event in letter.events.all %}
+                    {% for aw in event.artworks.all %}
+                        {% if aw == artwork %}
+                        <p>{{ event }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                </i>
+            </p>
+            <p>
+                {% if event.persons.all.count > 0 %}
+                    I samband med konstverket nämns dessutom
+                    <strong><a href="">
+                    {% if event.persons.all.count == 1 %}
+                        personen
+                    {% else %}
+                        personerna
+                    {% endif %}
+                    </a>
+                    </strong>
+
+                    {% for person in event.persons.all %}
+                        <a href="{{ person.get_absolute_url }}"><strong>{{ person.name }}</strong></a>{% if event.persons.all.count == 1 or forloop.last%}.{% else %},{% endif %}
+                    {% endfor %}
+                {% endif %}
+            </p>
+           <a href="{{ letter.get_absolute_url }}" class="btn btn-default btn-small" role="button">Läs mera <span class="glyphicon glyphicon-chevron-right"></span> </a>
+        </div>
+        <div class="col-md-4">
+            {% if artwork.files.all %}
+                    <a href="{{ artwork.get_absolute_url }}">
+                        <img src="{% static artwork.files.first.thumbnail_path %}" class="img-responsive">
+                    </a>
+                    <i>{{ artwork }}</i>
+            {% endif %}
+        </div>
+    </div>
+    <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/sv_SE/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Följ oss på Facebook</h3>
+            <div class="fb-page" data-href="https://www.facebook.com/albertedelfeltsbrev" data-width="500" data-height="1500" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" data-show-posts="true"><div class="fb-xfbml-parse-ignore"><blockquote cite="https://www.facebook.com/albertedelfeltsbrev"><a href="https://www.facebook.com/albertedelfeltsbrev">Albert Edelfelts brev</a></blockquote></div></div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static "EdelfeltApp/highcharts.js" %}"></script>
+    <script src="{% static "EdelfeltApp/broken-axis.js" %}"></script>
+    {% comment %}<script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/broken-axis.js"></script>{% endcomment %}
+    {% if letter.start_month_no %}
+        <script>
+            function weekMonday(dayNumber){
+                if(dayNumber == 0){
+                    return 6;
+                }
+                else{
+                    return dayNumber-1
+                }
+
+            }
+            $(function () {
+                var weekdays ={
+                    0:'Må',
+                    1:'Ti',
+                    2:'Ons',
+                    3:'To',
+                    4:'Fre',
+                    5:'Lö',
+                    6:'Sö'
+
+                }
+
+                Highcharts.setOptions({
+                    lang: {
+                        shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
+                    } });
+
+                $('#timeline').highcharts({
+                    chart: {
+                        type: 'scatter'
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    legend:{
+                        enabled:true
+                    },
+                    title: {
+                        text: null
+
+                    },
+                    plotOptions: {
+                        series: {
+                            cursor: 'pointer',
+                            point: {
+                                events: {
+                                    click: function() {
+                                        location.href = this.options.url;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        dateTimeLabelFormats: { // don't display the dummy year
+                                 month: '%e. %b',
+                                 year: '%b'
+                             },
+                        labels: {
+                            formatter: function() {
+                                var d = new Date(this.value);
+                                if (d.getUTCMonth() == 0){
+                                    return Highcharts.dateFormat("%b<br>%Y",this.value); // if jan display year
+                                }else{
+                                    return Highcharts.dateFormat("%b",this.value); // just month
+                                }
+
+
+                                var monthStr = Highcharts.dateFormat('%b', this.value);
+                                //var firstLetter = monthStr.substring(0, 1);
+                                return monthStr;
+                            }
+                        },
+                        {# Year breaks where no data exists #}
+                        plotLines: [{
+                            color: '#428bca', // Color value
+                            dashStyle: 'shortdot', // Style of the plot line. Default to solid
+                            value: Date.UTC(1867, 10, 1), // Value of where the line will appear
+                            width: '4' // Width of the line
+                        },
+                            {
+                            color: '#428bca', // Color value
+                            dashStyle: 'shortdot', // Style of the plot line. Default to solid
+                            value: Date.UTC(1877, 08, 1), // Value of where the line will appear
+                            width: '4' // Width of the line
+                        }],
+                        breaks: [{
+                            from: Date.UTC(1867, 10, 1),
+                            to: Date.UTC(1871, 4, 1)
+                            //breakSize: 1
+                        },
+                            {
+                            from: Date.UTC(1877, 08, 1),
+                            to: Date.UTC(1884, 11, 1)
+                            //breakSize: 1
+                        }]
+                    },
+                    yAxis: {
+                        tickInterval:1,
+                        title: {
+                            text: null
+                        },
+                        min: 0,
+                        max: 6,
+                        labels:{
+                            enabled:true,
+                            formatter: function() {
+                                var value = weekdays[this.value];
+                                return value !== 'undefined' ? value : this.value;
+                            }
+                        }
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            if(this.series.name == 'Vertical'){
+                                return false;
+                            }
+                            else{
+                                return '<b>'+ this.series.name +'</b><br/>'+
+                                    /*Highcharts.dateFormat('%e. %b', this.x) +': '+*/ this.key;
+                            }
+                        }
+                    },
+
+                    series: [{
+                        name:'Brev',
+                        lineWidth : 0,
+                        data: [
+                            {% for l in letters %}
+                                {% if l.start_year_no and l.start_month_no and l.start_day_no %}
+                                    {
+                                        x:Date.UTC({{ l.start_year_no}}, {{ l.start_month_no }}-1, {{ l.start_day_no }}),
+                                        y:weekMonday({{ l.date |date:"w" }}),
+                                        name:'{{ l }}',
+                                        url:'{{ l.get_absolute_url }}',
+                                        {% if l != letter %}
+                                            marker:{ fillColor: '#f0ad4e'}
+                                        {% endif %}
+                                    },
+                                {% endif %}
+                            {% endfor %}
+                        ]
+                    },
+                        {
+                            type: 'line',
+                            showInLegend: false,
+                            data: [
+                                {
+                                    x:Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no | default_if_none:1}}),
+                                    y:0,
+                                    url:'{{ letter.get_absolute_url }}'
+                                },
+                                {
+                                    x:Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no  | default_if_none:1}}),
+                                    y:10,
+                                    url:'{{ letter.get_absolute_url }}'
+                                },
+                                //[Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no }}),0],
+                                //[Date.UTC({{ letter.start_year_no}}, {{ letter.start_month_no }}-1, {{ letter.start_day_no }}),10]
+                            ],
+                            marker: {
+                                radius: 0.5,
+                                lineColor: 'Gray'
+                            },
+                            lineWidth:0.3
+                        }
+                    ]
+                });
+            });
+
+        </script>
+    {% endif %}
+
+    <script>
+        function showMore(){
+            $(".moreText").show()
+            $("#moreButton").hide()
+        }
+    </script>
+{% endblock %}

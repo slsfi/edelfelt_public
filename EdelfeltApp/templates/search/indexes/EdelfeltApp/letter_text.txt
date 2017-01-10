@@ -1,0 +1,9 @@
+{{ object.title }}
+{{ object.description }}
+{{ object.date }}
+{{ object.language }}
+
+{{ object.subjects.all | join:" " }}
+
+{{ object.events.all | join:" " }}
+{{ object.locations.all | join:" " }}

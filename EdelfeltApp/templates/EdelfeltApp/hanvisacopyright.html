@@ -1,0 +1,65 @@
+{% extends "EdelfeltApp/base.html" %}
+{% block pre_title %}Hänvisa och upphovsrätt{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Hänvisa till utgåvan och upphovsrätt</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-8">
+
+                    <h4>Så här hänvisar du till utgåvan</h4>
+<p><i>Albert Edelfelts brev. Elektronisk brev- och konstutgåva</i>, utg. Maria Vainio-Kurtakko & Henrika Tandefelt & Elisabeth Stubb, Svenska litteratursällskapet i Finland, 2014−
+Ange också URN-namn!</p>
+
+<p>Varje brev har försetts med individuella URN-namn som du finner på respektive sida. URN-namn för utgåvan som helhet är <i>URN:NBN:fi:sls-3994-1410269496090</i>. Läs mer om URN på <a href="http://www.nationalbiblioteket.fi/utgtjanster/urn.html">Nationalbibliotekets sidor.</a></p>
+
+                                        <p>
+                        Albert Edelfelts brev till Alexandra Edelfelt tillhör <a href="http://www.sls.fi">Svenska litteratursällskapet i Finland</a> och
+                        ingår i SLSA 367 Edelfeltska släktarkivet i SLS arkiv.
+                    </p>
+
+
+
+
+                    <h4>Upphovsrätt</h4>
+
+
+                    <p>
+                        Alla bilder av konstverk, teckningar och skisser som inte är illustrationer i utgåvans brev tillhör <a href="http://www.fng.fi">Finlands Nationalgalleri</a>. Alla rättigheter förbehålls.
+                    </p>
+                    <p>
+                        Det är inte tillåtet att göra bestående kopior av de konstverk, teckningar och skisser som tillhör <a href="http://www.fng.fi">Finlands Nationalgalleri</a> eller att integrera dessa i något annat datasystem.
+                    </p>
+
+                    <p>
+                        Copyright © Konstnärerna, fotografen, övriga copyrightinnehavare, Kuvasto r.f. och <a href="http://www.fng.fi">Finlands Nationalgalleri</a>.
+                    </p>
+
+                    <p>
+                        Bilder av konstverk kan beställas för forsknings- och publikationssyfte från <a href="http://www.fng.fi/information_och_bildforsaljning/anvandarrattigheter">Finlands Nationalgalleris Bildsamlingar</a>.
+                    </p>
+
+                    <p>
+                        Bertel Hintzes kommentarer är är licensierade under en Creative Commons (CC-BY-ND) Erkännande– Inga bearbetningar 4.0-licens.
+                    </p>
+
+
+                    <h4>Öppen data</h4>
+
+                    <p>
+                        Övrigt innehåll (t.ex. brev, händelsebeskrivningar) och data är licensierat under en <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.sv">CC0 1.0 universell (CC0 1.0)</a>-licens.
+                        Hänvisa gärna till utgåvan enligt instruktionerna ovan.
+                    </p>
+
+                    <p>
+                        Utgåvans data finns även tillgänglig som öppen data via ett experimentellt <a href="{% url 'api_info' %}">REST API</a> som kan uppdateras när som helst.
+                    </p>
+
+
+                </div>
+            </div>
+        </div>
+        </div>
+{% endblock %}

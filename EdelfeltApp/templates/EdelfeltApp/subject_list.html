@@ -1,0 +1,54 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}Ämnesord{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-11">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Ämnesord</h3>
+                </div>
+                <div class="panel-body">
+                <p>Breven är kategoriserade enligt ämnesord från <a href="http://finto.fi/allars/fi/">Allärs tesaurus</a>.</p>
+                    {% regroup subjects by name|capfirst|slice:"0:1" as by_first %}
+                    {% for letter in by_first%}
+                        <div id="grouper_{{ letter.grouper }}" class="row">
+                            <div class="col-md-2">
+                                <h4 id="{{ letter.grouper }}">{{ letter.grouper }}</h4>
+                            </div>
+                        </div>
+                        {% for subject in letter.list %}
+                            <div class="row">
+                                <div class="col-md-2 tight">
+                                    <strong>
+                                        <a href="{{ subject.get_absolute_url }}">{{ subject }}</a>
+                                    </strong>
+                                </div>
+                                <div class="col-md-5 tight">
+                                    <span class="badge">{{ subject.letters.count }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1" id="sidenav">
+            <div id="fixed-nav">
+                <ul class="nav nav-pills nav-stacked">
+                    {% for letter in by_first %}
+                        <li {% if forloop.first %}class="active"{% endif %}><a class="tight" href="#{{ letter.grouper }}">{{ letter.grouper }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+
+     <script>
+        $(document).ready(function (){
+            $('#fixed-nav').affix({offset:{top:$('#fixed-nav').offset().top}});});
+    </script>
+{% endblock %}

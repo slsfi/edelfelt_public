@@ -1,0 +1,29 @@
+{% extends "EdelfeltApp/base.html" %}
+{% load staticfiles %}
+{% block pre_title %}Galleri {% endblock %}
+
+{% block content %}
+<div id="mygallery" >
+    {% for artwork in artworks.all %}
+        <a href="{{ artwork.get_absolute_url  }}">
+                    <img src="{% static artwork.files.first.thumbnail_path %}"
+                         alt="{{ artwork }}">
+                </a>
+    {% endfor %}
+</div>
+
+
+<link rel="stylesheet" href="{% static 'EdelfeltApp/justifiedgallery/justifiedGallery.min.css' %}" />
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'EdelfeltApp/justifiedgallery/jquery.justifiedGallery.min.js' %}"></script>
+    <script>
+        $( document ).ready(function() {
+            $("#mygallery").justifiedGallery({
+                    rowHeight: 300,
+                    margins: 5
+
+            });
+    });
+    </script>
+{% endblock %}

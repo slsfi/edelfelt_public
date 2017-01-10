@@ -1,0 +1,5 @@
+{{object.name}} {{object.name}}
+{{object.country}}
+{{object.province}}
+{{object.classic_municipality}}
+{{ object.comment }}

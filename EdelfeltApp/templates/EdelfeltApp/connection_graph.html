@@ -1,0 +1,38 @@
+
+<style>
+
+    #circle circle {
+        fill: none;
+        pointer-events: all;
+    }
+
+    .group path {
+    fill-opacity: .5;
+    }
+
+    path.chord {
+        stroke: #000;
+        stroke-width: .25px;
+    }
+
+    #circle:hover path.fade {
+        display: none;
+    }
+
+</style>
+
+{% comment %}
+<!--
+    Hide this for the moment, as adding second degree connections tends to make the graph
+    so unreadable it's useless.
+-->
+<form class="form">
+<select onChange="redrawGraph(this)">
+    <option value="1" selected="selected">Första grad kopplingar</option>
+    <option value="2">Andra grad kopplingar</option>
+</select>
+</form>
+{% endcomment %}
+
+<div id="connectionSvg"></div>
+
